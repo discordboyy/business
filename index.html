@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Auto 5% Daily USDT Growth Tracker</title>
+  <link rel="icon" type="image/png" href="icon-tracker.png" sizes="32x32">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <audio id="bg-music" src="nettspend.mp3" autoplay loop hidden></audio>
+  <script>
+    const music = document.getElementById("bg-music");
+    music.volume = 0.3;
+
+    // Start music on first user interaction
+    function enableAudio() {
+      music.play();
+      document.removeEventListener("click", enableAudio);
+    }
+
+    document.addEventListener("click", enableAudio);
+  </script>
+  <main>
+    <div class="header-margin">
+      <h1 class="header-font">USDT Growth Tracker</h1>
+      <h2 class="header-font">From $30 to $100 — 5% Daily Growth</h2>
+    </div>
+
+    <section class="section-balance">
+      <p class="balance">$<span id="total">30.00</span></p>
+      <p class="underscription">Available total balance</p>
+    </section>
+
+    <div id="summary">
+      <p class="day-count">Day <span id="day">0</span></p>
+      <p class="gain-section">Today's Gain: $<span id="gain">0.00</span></p>
+      <p class="update-section">Last Updated: <span id="lastUpdate">-</span></p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Previous Total</th>
+          <th>Today's Gain</th>
+          <th>New Total</th>
+        </tr>
+      </thead>
+      <tbody id="history"></tbody>
+    </table>
+
+    <script>
+      const growthRate = 0.05;
+      const initialAmount = 30;
+      const dayMs = 24 * 60 * 60 * 1000;
+      const userId = "demo-user"; // можно заменить на логин, IP, email, auth-токен и т.д.
+      const apiBase = "https://usdt-growth-tracker-api.onrender.com/"; // ← замени на свой URL сервера
+
+      async function loadFromServer() {
+        const res = await fetch(`${apiBase}/tracker/${userId}`);
+        const data = await res.json();
+        return data || null;
+      }
+
+      async function saveToServer(data) {
+        await fetch(`${apiBase}/tracker/${userId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+      }
+
+      async function loadData() {
+        let data = await loadFromServer();
+
+        if (!data) {
+          data = {
+            day: 0,
+            total: initialAmount,
+            lastTimestamp: Date.now(),
+            history: [{
+              day: 0,
+              previous: 0,
+              gain: 0,
+              total: initialAmount
+            }]
+          };
+        }
+
+        const now = Date.now();
+        const daysPassed = Math.floor((now - data.lastTimestamp) / dayMs);
+
+        for (let i = 0; i < daysPassed; i++) {
+          const prevTotal = data.total;
+          const gain = +(prevTotal * growthRate).toFixed(2);
+          const newTotal = +(prevTotal + gain).toFixed(2);
+
+          data.day += 1;
+          data.total = newTotal;
+          data.history.push({
+            day: data.day,
+            previous: prevTotal,
+            gain: gain,
+            total: newTotal
+          });
+        }
+
+        if (daysPassed > 0) {
+          data.lastTimestamp += daysPassed * dayMs;
+          await saveToServer(data);
+        }
+
+        renderData(data);
+      }
+
+      function renderData(data) {
+        document.getElementById("day").textContent = data.day;
+        document.getElementById("total").textContent = data.total.toFixed(2);
+
+        const last = data.history[data.history.length - 1];
+        document.getElementById("gain").textContent = last.gain.toFixed(2);
+        document.getElementById("lastUpdate").textContent = new Date(data.lastTimestamp).toLocaleString();
+
+        const historyEl = document.getElementById("history");
+        historyEl.innerHTML = "";
+        data.history.forEach(entry => {
+          const row = `<tr>
+            <td>${entry.day}</td>
+            <td>$${entry.previous.toFixed(2)}</td>
+            <td>$${entry.gain.toFixed(2)}</td>
+            <td>$${entry.total.toFixed(2)}</td>
+          </tr>`;
+          historyEl.innerHTML += row;
+        });
+      }
+
+      loadData();
+    </script>
+
+    <div class="carousel" id="carousel">
+        <div class="carousel-track" id="carousel-track">
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/ca/26/04/ca26048cc526ca84d3860971e5da6e6c.jpg" alt="1" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/ab/fb/a8/abfba83573712bb0a53beb542336fa60.jpg" alt="2" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/f6/61/3d/f6613dd6c2c05ac0c703d09aaa5d7e43.jpg" alt="3" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/a6/94/9e/a6949e98f82f050b738050620c72ca00.jpg" alt="4" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/a2/43/23/a243231ac3e2c2932cf4b32d38c8bd40.jpg" alt="5" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/aa/ca/37/aaca3793b0f60e2b0be5a15681f7888c.jpg" alt="6" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/20/f1/42/20f1425b27019aa125e327fed15641e3.jpg" alt="7" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/c0/e8/d1/c0e8d1a89095834b70f5aff1f878ec13.jpg" alt="8" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/81/39/75/813975c9b499ba27138909400a0f75eb.jpg" alt="9" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/65/e3/3d/65e33ddd1bf54789bcbd1f50d937094d.jpg" alt="10" /></div>
+        <div class="carousel-slide"><img src="https://i.pinimg.com/736x/38/ae/3d/38ae3d33dca353be5947805d4ddecdb0.jpg" alt="11" /></div>
+    </div>
+    </div>
+
+    <script>
+    const track = document.getElementById("carousel-track");
+    const slides = document.querySelectorAll(".carousel-slide");
+    const carousel = document.getElementById("carousel");
+
+    let index = 0;
+    const slideCount = slides.length;
+
+    // Clone first and last slide for seamless looping
+    const firstClone = slides[0].cloneNode(true);
+    const lastClone = slides[slideCount - 1].cloneNode(true);
+
+    track.appendChild(firstClone);
+    track.insertBefore(lastClone, slides[0]);
+
+    const totalSlides = document.querySelectorAll(".carousel-slide").length;
+
+    let currentIndex = 1;
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+    let interval = setInterval(moveToNextSlide, 1000);
+
+    function moveToNextSlide() {
+      if (currentIndex >= totalSlides - 1) return;
+      currentIndex++;
+      track.style.transition = "transform 0.5s ease-in-out";
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
+
+    function moveToPrevSlide() {
+      if (currentIndex <= 0) return;
+      currentIndex--;
+      track.style.transition = "transform 0.5s ease-in-out";
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
+
+    track.addEventListener("transitionend", () => {
+      const slides = document.querySelectorAll(".carousel-slide");
+      if (slides[currentIndex].children[0].alt === "1") {
+        track.style.transition = "none";
+        currentIndex = 1;
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+      }
+      if (slides[currentIndex].children[0].alt === "11") {
+        track.style.transition = "none";
+        currentIndex = slideCount;
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+      }
+    });
+
+    // Pause on hover
+    carousel.addEventListener("mouseenter", () => clearInterval(interval));
+    carousel.addEventListener("mouseleave", () => interval = setInterval(moveToNextSlide, 2500));
+  </script>
+  </main>
+</body>
+</html>
