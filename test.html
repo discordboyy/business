@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scroll Skills Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f5f5f5;
+    }
+
+    /* Просто чтобы было куда скроллить до/после */
+    .spacer {
+      height: 100vh;
+    }
+
+    /* SECTION */
+    .skills-section {
+      height: 200vh; /* scroll пространство */
+      position: relative;
+    }
+
+    /* LIST */
+    .skills-list {
+      position: sticky;
+      top: 50%;
+      transform: translateY(-50%);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      align-items: center;
+    }
+
+    /* ITEM */
+    .skill-item {
+      --p: 0; /* прогресс от 0 до 1 */
+
+      font-size: 64px;
+      font-weight: 700;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: rgb(
+        calc(180 - var(--p) * 180),
+        calc(180 - var(--p) * 180),
+        calc(180 - var(--p) * 180)
+      );
+
+      transform: scale(calc(1 + var(--p) * 0.25));
+      transition: transform 0.15s linear, color 0.15s linear;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="spacer"></div>
+
+  <section class="skills-section">
+    <ul class="skills-list">
+      <li class="skill-item">Branding</li>
+      <li class="skill-item">UX/UI Design</li>
+      <li class="skill-item">Web Design</li>
+      <li class="skill-item">Motion</li>
+      <li class="skill-item">Creative Direction</li>
+      <li class="skill-item">Strategy</li>
+    </ul>
+  </section>
+
+  <div class="spacer"></div>
+
+  <script>
+    const items = document.querySelectorAll(".skill-item");
+
+    function update() {
+      const viewportCenter = window.innerHeight / 2;
+
+      items.forEach(item => {
+        const rect = item.getBoundingClientRect();
+        const itemCenter = rect.top + rect.height / 2;
+
+        const dist = Math.abs(viewportCenter - itemCenter);
+        const maxDist = window.innerHeight / 2;
+
+        let progress = 1 - dist / maxDist;
+        progress = Math.max(0, Math.min(1, progress));
+
+        item.style.setProperty("--p", progress.toFixed(3));
+      });
+    }
+
+    window.addEventListener("scroll", update);
+    update();
+  </script>
+
+</body>
+</html>
