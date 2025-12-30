@@ -1,107 +1,170 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Scroll Skills Demo</title>
+  <meta charset="UTF-8">
+  <title>Skills Sticky Demo</title>
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", sans-serif;
     }
 
     body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
       background: #f5f5f5;
     }
 
-    /* Просто чтобы было куда скроллить до/после */
-    .spacer {
-      height: 100vh;
+    /* HERO SECTION */
+    .hero-section {
+      height: 742px; /* как на твоем сайте */
+      background: linear-gradient(to bottom, #4a90e2, #50e3c2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 64px;
+      font-weight: 400;
     }
 
-    /* SECTION */
-    .skills-section {
-      height: 200vh; /* scroll пространство */
-      position: relative;
-    }
-
-    /* LIST */
-    .skills-list {
-      position: sticky;
-      top: 50%;
-      transform: translateY(-50%);
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
+    /* BRAND SECTION */
+    .brand-section {
       display: flex;
       flex-direction: column;
-      gap: 32px;
       align-items: center;
+      width: 1772px;
+      margin: 0 auto;
+      margin-top: 194px; /* расстояние как на сайте */
     }
 
-    /* ITEM */
-    .skill-item {
-      --p: 0; /* прогресс от 0 до 1 */
-
-      font-size: 64px;
-      font-weight: 700;
-      height: 90px;
+    .title-brand {
       display: flex;
-      align-items: center;
+      gap: 25px;
       justify-content: center;
+      font-size: 64px;
+      font-weight: 400;
+      margin-bottom: 50px; /* отступ до skills */
+    }
 
-      color: rgb(
-        calc(180 - var(--p) * 180),
-        calc(180 - var(--p) * 180),
-        calc(180 - var(--p) * 180)
-      );
+    /* SKILLS SECTION */
+    .skills-section {
+      width: 100%;
+      height: 800px; /* достаточно для sticky */
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
 
-      transform: scale(calc(1 + var(--p) * 0.25));
-      transition: transform 0.15s linear, color 0.15s linear;
-      user-select: none;
+    .skills-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      position: sticky;
+    }
+
+    .skill-item {
+      font-size: 62px;
+      font-weight: 700;
+      text-align: center;
+      color: #e4e4e4;
+      transition: 0.3s ease;
+    }
+
+    .skill-item--near {
+      color: #b8b8b8;
+      transform: scale(1.05);
+    }
+
+    .skill-item--nearer {
+      color: #6a6a6a;
+      transform: scale(1.1);
+    }
+
+    .skill-item--active {
+      color: #000;
+      transform: scale(1.2);
+    }
+
+    /* DESCRIPTION SECTION */
+    .description-section {
+      height: 1000px;
+      margin-top: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      font-size: 32px;
     }
   </style>
 </head>
 <body>
 
-  <div class="spacer"></div>
+  <!-- HERO -->
+  <div class="hero-section">
+    HERO SECTION
+  </div>
 
-  <section class="skills-section">
-    <ul class="skills-list">
-      <li class="skill-item">Branding</li>
-      <li class="skill-item">UX/UI Design</li>
-      <li class="skill-item">Web Design</li>
-      <li class="skill-item">Motion</li>
-      <li class="skill-item">Creative Direction</li>
-      <li class="skill-item">Strategy</li>
-    </ul>
-  </section>
+  <!-- BRAND -->
+  <div class="brand-section">
+    <div class="title-brand">
+      <div class="title-brand-leftpart">Brand Left</div>
+      <div class="title-brand-logo">LOGO</div>
+      <div class="title-brand-rightpart">Brand Right</div>
+    </div>
 
-  <div class="spacer"></div>
+    <!-- SKILLS -->
+    <div class="skills-section">
+      <ul class="skills-list" id="skills-list">
+        <li class="skill-item">Branding</li>
+        <li class="skill-item">UX/UI Design</li>
+        <li class="skill-item">Web Design</li>
+        <li class="skill-item">Motion</li>
+        <li class="skill-item">Creative Direction</li>
+        <li class="skill-item">Strategy</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="description-section">
+    DESCRIPTION SECTION
+  </div>
 
   <script>
-    const items = document.querySelectorAll(".skill-item");
+    const list = document.getElementById('skills-list');
+    const items = [...list.querySelectorAll('.skill-item')];
 
-    function update() {
+    function updateFocus() {
       const viewportCenter = window.innerHeight / 2;
+      let minDist = Infinity;
+      let activeIndex = 0;
 
-      items.forEach(item => {
+      items.forEach((item, i) => {
         const rect = item.getBoundingClientRect();
         const itemCenter = rect.top + rect.height / 2;
-
         const dist = Math.abs(viewportCenter - itemCenter);
-        const maxDist = window.innerHeight / 2;
 
-        let progress = 1 - dist / maxDist;
-        progress = Math.max(0, Math.min(1, progress));
-
-        item.style.setProperty("--p", progress.toFixed(3));
+        if (dist < minDist) {
+          minDist = dist;
+          activeIndex = i;
+        }
       });
+
+      items.forEach(item => {
+        item.classList.remove('skill-item--active', 'skill-item--near', 'skill-item--nearer');
+      });
+
+      const A = activeIndex;
+      items[A]?.classList.add('skill-item--active');
+      items[A - 1]?.classList.add('skill-item--nearer');
+      items[A + 1]?.classList.add('skill-item--nearer');
+      items[A - 2]?.classList.add('skill-item--near');
+      items[A + 2]?.classList.add('skill-item--near');
     }
 
-    window.addEventListener("scroll", update);
-    update();
+    window.addEventListener('scroll', updateFocus);
+    updateFocus();
   </script>
 
 </body>
