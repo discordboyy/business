@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Swiper Carousel (No Horizontal Scroll)</title>
+
+  <!-- Swiper CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"
+  />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      margin: 0; /* убрать дефолтные отступы body */
+      overflow-x: hidden; /* полностью блокируем горизонтальный скролл */
+    }
+
+    .swiper-container {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+      overflow: hidden; /* обрезаем все, что не помещается */
+    }
+
+    .swiper-wrapper {
+      display: flex;
+    }
+
+    .swiper-slide {
+      background: #fff;
+      text-align: center;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 180px;
+      border: 1px solid #ddd;
+      flex-shrink: 0; /* важная штука — чтобы слайды не сжимались */
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Swiper Carousel (No Horizontal Scroll)</h2>
+
+  <!-- Swiper -->
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">Slide 1</div>
+      <div class="swiper-slide">Slide 2</div>
+      <div class="swiper-slide">Slide 3</div>
+      <div class="swiper-slide">Slide 4</div>
+      <div class="swiper-slide">Slide 5</div>
+      <div class="swiper-slide">Slide 6</div>
+    </div>
+
+    <!-- Pagination (точки) -->
+    <div class="swiper-pagination"></div>
+
+    <!-- Навигационные стрелки -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+
+  <!-- Swiper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+  <script>
+    const swiper = new Swiper('.swiper-container', {
+      slidesPerView: 3,
+      spaceBetween: 20,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      // loop и autoplay убраны
+    });
+  </script>
+
+</body>
+</html>
