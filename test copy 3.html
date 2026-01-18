@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Crypto Dashboard</title>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- CountUp -->
+  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.umd.js"></script>
+
+  <style>
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 40px;
+      color: #000;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .balance {
+      font-size: 80px;
+      font-weight: 800;
+      margin: 30px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 40px;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 300px !important;
+    }
+
+    .card {
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>BTC Portfolio</h1>
+
+  <div id="balance" class="balance">0</div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>BTC Price</h3>
+      <canvas id="priceChart"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>APY History</h3>
+      <canvas id="apyChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== Animated balance =====
+  const balance = new countUp.CountUp("balance", 0.52058821, {
+    decimalPlaces: 8,
+    duration: 2
+  });
+  balance.start();
+
+  // ===== BTC price line chart =====
+  const priceCtx = document.getElementById('priceChart').getContext('2d');
+
+  const priceChart = new Chart(priceCtx, {
+    type: 'line',
+    data: {
+      labels: ['14:30','14:35','14:40','14:45','14:50','14:55'],
+      datasets: [{
+        data: [34680, 34710, 34620, 34790, 34850, 34810],
+        borderColor: '#000',
+        borderWidth: 2,
+        tension: 0.4,
+        pointRadius: 0
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: '#eee' },
+          ticks: { callback: v => '$' + v }
+        }
+      }
+    }
+  });
+
+  // ===== APY bar chart =====
+  const apyCtx = document.getElementById('apyChart').getContext('2d');
+
+  new Chart(apyCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'],
+      datasets: [{
+        data: [6, 7, 6.5, 7.2, 6.9, 7, 6.8, 7.1],
+        backgroundColor: '#000'
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          ticks: { callback: v => v + '%' },
+          grid: { color: '#eee' }
+        }
+      }
+    }
+  });
+
+  // ===== Fake realtime updates =====
+  setInterval(() => {
+    const last = priceChart.data.datasets[0].data.slice(-1)[0];
+    const next = last + (Math.random() - 0.5) * 100;
+
+    priceChart.data.datasets[0].data.push(Math.round(next));
+    priceChart.data.labels.push(new Date().toLocaleTimeString());
+
+    if (priceChart.data.labels.length > 10) {
+      priceChart.data.labels.shift();
+      priceChart.data.datasets[0].data.shift();
+    }
+
+    priceChart.update();
+  }, 3000);
+</script>
+
+</body>
+</html>

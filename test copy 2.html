@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Swiper Carousel (Swipe Only)</title>
+  <title>Gallery Swiper Prototype</title>
 
   <!-- Swiper CSS -->
   <link
@@ -12,75 +12,257 @@
   />
 
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f4;
       padding: 20px;
-      margin: 0; /* убрать дефолтные отступы body */
-      overflow-x: hidden; /* запрещаем горизонтальный скролл */
+      overflow-x: hidden;
     }
 
+    .hello-section-artworks {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+      margin: auto;
+    }
+
+    .artworks-section-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .artworks-title-logo-holder {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    .kunstverk-title {
+      font-size: 64px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .artworks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .artwork-item-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .artwork-item-link-title {
+      font-size: 26px;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .artwork-item-link-stats {
+      font-size: 21px;
+      color: #b0b0b0;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .artwork-item-container:hover .artwork-item-link-title {
+      text-decoration: underline;
+      opacity: 0.7;
+      transform: translateX(5px);
+    }
+    .artwork-item-container:hover .artwork-item-link-stats {
+      text-decoration: underline;
+      transform: translateX(-5px);
+    }
+
+    .artwork-dir-holder {
+      margin-top: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      align-items: flex-start;
+    }
+
+    .artwork-dir {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      padding-top: 50px;
+    }
+
+    .artwork-dir-title {
+      font-size: 64px;
+    }
+
+    /* --- Swiper container --- */
     .swiper-container {
       width: 100%;
-      max-width: 900px;
-      margin: auto;
-      overflow: hidden; /* обрезаем все, что не помещается */
-    }
-
-    .swiper-wrapper {
-      display: flex;
     }
 
     .swiper-slide {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       background: #fff;
       text-align: center;
       font-size: 18px;
-      display: flex;
       justify-content: center;
       align-items: center;
-      height: 180px;
-      border: 1px solid #ddd;
-      flex-shrink: 0; /* слайды не сжимаются */
+      height: auto;
+      width: auto;
     }
 
-    /* Скрываем стрелки полностью */
-    .swiper-button-next,
-    .swiper-button-prev {
-      display: none;
+    .artwork-dir-item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .artwork-dir-item-codelink {
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .img-css {
+      width: 352px;
+      height: 182.891;
+      padding: 10px 10px 0px 10px;
+
     }
   </style>
 </head>
 <body>
 
-  <h2>Swiper Carousel (Swipe Only)</h2>
+  <div class="hello-section-artworks" id="gallery-section">
+    <div class="artworks-section-container">
+      <div class="artworks-title-logo-holder">
+        <div class="kunstverk-title">Gallery</div>
+        <img src="https://via.placeholder.com/80x40?text=Logo" alt="Logo" />
+      </div>
 
-  <!-- Swiper -->
-  <div class="swiper-container">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide">Slide 1</div>
-      <div class="swiper-slide">Slide 2</div>
-      <div class="swiper-slide">Slide 3</div>
-      <div class="swiper-slide">Slide 4</div>
-      <div class="swiper-slide">Slide 5</div>
-      <div class="swiper-slide">Slide 6</div>
+      <div class="artworks-list" id="collections-list">
+        <!-- JS заполнит коллекции -->
+      </div>
     </div>
+  </div>
 
-    <!-- Пагинация (точки) -->
-    <div class="swiper-pagination"></div>
+  <div class="artwork-dir-holder" id="artwork-dir-holder">
+    <!-- JS заполнит детали коллекций -->
   </div>
 
   <!-- Swiper JS -->
   <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
   <script>
-    const swiper = new Swiper('.swiper-container', {
-      slidesPerView: 3,      // сколько слайдов видно сразу
-      spaceBetween: 20,       // расстояние между слайдами
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
+    const collections = [
+      {
+        id: "collection1",
+        title: "“Pencil” Collection",
+        description: "Description for collection 1",
+        items: [
+          { src: "https://i.pinimg.com/736x/ca/26/04/ca26048cc526ca84d3860971e5da6e6c.jpg", code: "250612165155RPNG48501" },
+          { src: "https://i.pinimg.com/736x/ca/26/04/ca26048cc526ca84d3860971e5da6e6c.jpg", code: "250612165155RPNG48502" },
+          { src: "https://i.pinimg.com/736x/ca/26/04/ca26048cc526ca84d3860971e5da6e6c.jpg", code: "250612165155RPNG48503" },
+          { src: "https://i.pinimg.com/736x/ca/26/04/ca26048cc526ca84d3860971e5da6e6c.jpg", code: "250612165155RPNG48504" },
+          { src: "https://i.pinimg.com/736x/ca/26/04/ca26048cc526ca84d3860971e5da6e6c.jpg", code: "250612165155RPNG48505" }
+        ]
+      },
+      {
+        id: "collection2",
+        title: "Collection 2",
+        description: "Description for collection 2",
+        items: [
+          { src: "https://via.placeholder.com/400x300?text=2-1", code: "C2-1" },
+          { src: "https://via.placeholder.com/400x300?text=2-2", code: "C2-2" },
+          { src: "https://via.placeholder.com/400x300?text=2-3", code: "C2-3" },
+          { src: "https://via.placeholder.com/400x300?text=2-4", code: "C2-4" },
+          { src: "https://via.placeholder.com/400x300?text=2-5", code: "C2-5" }
+        ]
       }
-      // loop и autoplay убраны
+    ];
+
+    const collectionsList = document.getElementById("collections-list");
+    const artworkDirHolder = document.getElementById("artwork-dir-holder");
+
+    collections.forEach(col => {
+      // --- Список коллекций сверху ---
+      const container = document.createElement("div");
+      container.className = "artwork-item-container";
+      container.onclick = () => {
+        document.getElementById(col.id).scrollIntoView({ behavior: "smooth" });
+        history.replaceState(null, null, `#${col.id}`);
+      };
+
+      const title = document.createElement("div");
+      title.className = "artwork-item-link-title";
+      title.textContent = col.title;
+
+      const desc = document.createElement("div");
+      desc.className = "artwork-item-link-stats";
+      desc.textContent = col.description;
+
+      container.appendChild(title);
+      container.appendChild(desc);
+      collectionsList.appendChild(container);
+
+      // --- Swiper контейнер ---
+      const dir = document.createElement("div");
+      dir.className = "artwork-dir";
+      dir.id = col.id;
+
+      const dirTitle = document.createElement("h2");
+      dirTitle.className = "artwork-dir-title";
+      dirTitle.textContent = col.title;
+      dir.appendChild(dirTitle);
+
+      const swiperContainer = document.createElement("div");
+      swiperContainer.className = "swiper-container";
+
+      const swiperWrapper = document.createElement("div");
+      swiperWrapper.className = "swiper-wrapper";
+
+      col.items.forEach(item => {
+        const slide = document.createElement("div");
+        slide.className = "swiper-slide";
+
+        const img = document.createElement("img");
+        img.src = item.src;
+        img.alt = item.code;
+        img.className = "img-css"
+
+        const code = document.createElement("div");
+        code.className = "artwork-dir-item-codelink";
+        code.textContent = item.code;
+
+        slide.appendChild(img);
+        slide.appendChild(code);
+        swiperWrapper.appendChild(slide);
+      });
+
+      swiperContainer.appendChild(swiperWrapper);
+      dir.appendChild(swiperContainer);
+      artworkDirHolder.appendChild(dir);
+
+      // --- Инициализация Swiper для этой коллекции ---
+      new Swiper(swiperContainer, {
+        slidesPerView: 3,
+        spaceBetween: 20,
+        pagination: { el: '.swiper-pagination', clickable: true },
+      });
     });
   </script>
 
